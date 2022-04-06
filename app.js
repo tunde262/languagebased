@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 const connectDB = require('./config/db');
 
 // Routes
-const auth = require('./routes/api/auth');
+// const auth = require('./routes/api/auth');
 
 let app = express();
 
@@ -20,7 +20,7 @@ app.use(express.json({ extended: false }));
 app.use(express.static('public'));
 
 // Use Routes
-app.use('/api/auth', auth);
+// app.use('/api/auth', auth);
 
 app.listen(3000);
 
