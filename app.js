@@ -1,30 +1,24 @@
-let express = require('express');
-const fs = require('fs');
-const bodyParser = require('body-parser');
+const express = require('express');
 
 // DB
-const mongoose = require('mongoose');
 const connectDB = require('./config/db');
+const cookieParser = require('cookie-parser');
 
 // Routes
-// const auth = require('./routes/api/auth');
+const auth = require('./routes/authRoutes');
 
-let app = express();
+const app = express();
 
 connectDB();
 
 // Body parser middleware
 app.use(express.json({ extended: false }));
 
-// middleware
-app.use(express.static('public'));
+app.use(cookieParser());
 
 // Use Routes
-// app.use('/api/auth', auth);
+app.use('/api/auth', auth);
 
-app.listen(3000);
+const port = process.env.PORT || 5000;
 
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
-})
-
+app.listen(port, () => console.log(`Server running on port ${port}`));
