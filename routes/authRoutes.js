@@ -1,40 +1,40 @@
 const { Router } = require('express');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt'); // Bcrypt for encrypting password
 const jwt = require('jsonwebtoken');
-const { check, validationResult } = require('express-validator');
+const { check, validationResult } = require('express-validator'); // input validation library
 
 // controller file -> MVC organization pattern
 const authController = require('../controllers/authController');
 
 const router = Router();
 
-// Import User schema
+// Import User schema from mongoose
 const User = require('../models/User');
 
-router.get('/signup', authController.signup_get);
-
-// @route POST api/users
+// @route POST api/signup
 // @desc Register user
-// @access Public
 router.post('/signup', [
-    check('username', 'Full name is required').not().isEmpty(),
-    check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
+    check('screen_name', 'Full name is required').not().isEmpty(), // check if screen_name has a value
+    check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })  // check password length
 ], async (req, res) => {
-    const errors = validationResult(req);
+    const errors = validationResult(req); // check() returns errors to above conditions as an Array in validationResult(req)
+    
+    // Return error status and an object with validation errors array
     if(!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     } 
 
+    // req.body fields 
     let { 
-        username, 
+        screen_name, 
         password 
     } = req.body;
 
-    username = username.toLowerCase();
+    screen_name = screen_name.toLowerCase(); //
 
     try {
         // See if user exists
-        let user = await User.findOne({ username });
+        let user = await User.findOne({ screen_name });
 
         if(user) {
             return res.status(400).json({ errors: [{ msg: 'This email already exists' }] });
@@ -42,9 +42,10 @@ router.post('/signup', [
 
         // Get fields
         const userFields = {};
-        if(username) userFields.username = username.toLowerCase();
+        if(screen_name) userFields.screen_name = screen_name;
         userFields.password = password;
 
+        // Create new user in MongoDB
         user = new User(userFields);
 
         // Encrypt password
@@ -54,6 +55,7 @@ router.post('/signup', [
 
         await user.save();
 
+        // Create token to tell client user is authenticated
         const payload = {
             user: {
                 id: user.id
@@ -80,32 +82,36 @@ router.post('/signup', [
 // @desc Authenticate user & get token (Login)
 // @access Public
 router.post('/login', [
-    check('username', 'Full name is required').not().isEmpty(),
-    check('password', 'Password is required').exists()
+    check('screen_name', 'Full name is required').not().isEmpty(), // check if screen_name has a value
+    check('password', 'Password is required').exists() // check password
 ], async (req, res) => {
-    const errors = validationResult(req);
+    const errors = validationResult(req); // check() returns errors to above conditions as an Array in validationResult(req)
+    
+    // Return error status and an object with validation errors array
     if(!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     } 
 
-    let { username, password } = req.body;
-
-    username = username.toLowerCase();
+    let { screen_name, password } = req.body;
 
     try {
         // See if user exists
-        let user = await User.findOne({ username });
+        let user = await User.findOne({ screen_name });
 
+        //  If user doesn't exist return error
         if(!user) {
             return res.status(400).json({ errors: [{ msg: 'Invalid Credentials' }] });
         }
 
+        // Compare passwords to login user
         const isMatch = await bcrypt.compare(password, user.password);
 
+        // If passwords don't match return error
         if(!isMatch) {
             return res.status(400).json({ errors: [{ msg: 'Invalid Credentials' }] });
         }
 
+        // Create token to tell client user is authenticated
         const payload = {
             user: {
                 id: user.id
