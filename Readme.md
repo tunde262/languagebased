@@ -18,13 +18,31 @@ To Compile and execute the code follow these instructions:
 1. Open your terminal and in the project file directory run: 
 
 ```
-npm init
+npm install
 ```
 
-2. To start the server run:
+AND
 
 ```
-node app.js
+npm run client-install
+```
+
+2. To start the application run:
+
+```
+npm run dev
+```
+
+2. To start the server only run:
+
+```
+npm run server
+```
+
+2. To start the client only run:
+
+```
+npm run client
 ```
 
 3. In your browser go to:
