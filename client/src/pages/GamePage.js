@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 const GamePage = props => {
   return (
     <div>
-        GamePage
+       Finding your oppenent...
         <a href='/review'>Next Page</a>
     </div>
     
