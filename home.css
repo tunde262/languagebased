@@ -78,7 +78,6 @@ main {
 
 .gamePage {
     display: grid;
-    background-color: aqua;
 }
 
 .game_main {
@@ -86,11 +85,9 @@ main {
     height: 100%;
     text-align: center;
     width: 100%;
-    background-color: #58a700;
 }
 
 .game_container {
-    background-color: orange;
     min-height: 450px;
     display: grid;
     grid-template-rows: min-content minmax(0px, 1fr);
@@ -105,6 +102,8 @@ main {
     font-family: 'IBM Plex Sans', sans-serif;
 }
 
+/* Game card */
+
 .card {
     border-color: #e5e5e5;
     border-style: solid;
@@ -116,12 +115,83 @@ main {
     display: flex;
     flex-direction: column;
     font-size: 19px;
+    padding: 13px;
 }
 
 .card_container {
     display: grid;
     gap: 8px;
-    background-color: yellow;
+}
+
+.card_text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card_text > span:first-of-type {
+    text-align: center;
+}
+
+.card_text > span:nth-of-type(2) {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgb(229, 229, 229);
+    border-radius: 8px;
+    color: rgb(175, 175, 175);
+    font-size: 15px;
+    font-weight: bold;
+    height: 30px;
+    width: 30px;
+}
+
+.card_img_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    width: 100%;
+}
+
+.gameFooter_container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem;
+    box-sizing: border-box;
+}
+
+/* Match Page */
+
+.match_container {
+    min-height: 350px;
+    margin: 0 auto;
+}
+
+.match_container > h1 {
+    line-height: 1.25;
+    font-weight: 700;
+    font-size: 32px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    margin-bottom: 30px;
+}
+
+.match_player_container {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 10px 1rem;
+}
+
+.match_player {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 50px;
 }
 
 @media (min-width: 700px) {
@@ -142,6 +212,38 @@ main {
     .game_container {
         min-height: 450px;
         width: 600px;
+    }
+
+    .card_text {
+        justify-content: flex-end;
+    }
+
+    .card_text > span:first-of-type {
+        margin-right: auto;
+    }
+
+    .card_text > span:nth-of-type(2) {
+        display: flex;
+    }
+
+    /* Game Footer */
+
+    .gameFooter_container {
+        border-top: 2px solid rgb(229, 229, 229);
+        height: 140px;
+        bottom: 0;
+        position: absolute;
+    }
+
+    /* Match Page */
+
+    .match_container {
+        min-height: 350px;
+        width: 600px;
+    }
+
+    .match_player_container {
+        padding: 1rem 2rem;
     }
 }
 

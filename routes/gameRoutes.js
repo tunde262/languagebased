@@ -5,13 +5,6 @@ const mongoose = require('mongoose');
 const auth = require('../../middleware/auth');
 const { check, validationResult } = require('express-validator');
 
-//gridfs
-const crypto = require('crypto');
-const multer = require('multer');
-const { GridFsStorage } = require('multer-gridfs-storage');
-const Grid = require('gridfs-stream');
-const path = require('path');
-
 // Load Models
 const Game = require('../../models/Game');
 const User = require('../../models/User');
