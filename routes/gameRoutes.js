@@ -2,154 +2,39 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 
-const auth = require('../../middleware/auth');
+const auth = require('../middleware/auth');
 const { check, validationResult } = require('express-validator');
 
 // Load Models
-const Game = require('../../models/Game');
-const User = require('../../models/User');
+const User = require('../models/User');
+const Game = require('../models/Game');
 
-// @route GET api/profile/me
-// @desc Ge current user's store
-// @access Private
-router.get('/me', auth, async (req, res) => {
-    let storesArray = [];
-    let newStore;
-    try {
-        const profile = await Profile.findOne({ user: req.user.id });
-
-        console.log('PROFILE');
-        console.log(profile);
-
-        for(var i = 0; i < profile.stores.length; i++) {
-            console.log('STORE ID');
-            console.log(profile.stores[i].store);
-            newStore = await Store.findById(profile.stores[i].store);
-            console.log(newStore);
-            storesArray.push(newStore);
-            console.log('STORESS ARRAY');
-            console.log(storesArray);
-        }
-
-        console.log('FETCHED STORESSSSSS');
-        console.log(storesArray);
-    
-
-        // let store = await Store.findOne({ profile: profile.id });
-
-        if(!storesArray.length === 0) {
-            return res.status(400).json({ msg: 'There is no store for this user' });
-        }
-
-        res.json(storesArray);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server Error');   
-    }
-});
-
-//@route GET /:id
-//@desc Get single store by id
-router.get('/:id', async (req, res) => {
-    try {
-        const store = await Store.findById(req.params.id);
-
-        if(!store) {
-            return res.status(404).json({ msg: 'Store not found' });
-        }
-
-        res.json(store);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server Error'); 
-    }
-});
 
 // @route POST api/stores
 // @desc Create or join Game
 // @access Private
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
+
+        const {
+            language
+        } = req.body;
 
         // Get fields
-        const storeFields = {};
-        if(name) storeFields.name = name;
-        if(req.file) storeFields.img = req.file.id;
-        if(req.file) storeFields.img_name = req.file.filename;
-        if(description) storeFields.description = description;
-        if(email) storeFields.email = email;
-        if(phone) storeFields.phone = phone;
-        if(department) storeFields.department = department;
-        if(zipcode) storeFields.zipcode = zipcode;
-        // return address
-        if(return_placeId) storeFields.return_placeId = return_placeId;
-        if(area) storeFields.area = area;
-        if(coordinates) storeFields.coordinates = coordinates;
-        if(formatted_return_address) storeFields.formatted_return_address = formatted_return_address;
-
-        // Build return location obj
-        storeFields.return_location = {};
-        if(coordinates) {
-            storeFields.return_location.coordinates = coordinates.split(',').map(coordinate => coordinate.trim());
-        }
-
-        // Build address component obj
-        storeFields.return_address = {};
-        if(postalcode) storeFields.return_address.postalcode = postalcode;
-        if(street_name) storeFields.return_address.street_name = street_name;
-        if(street_number) storeFields.return_address.street_number = street_number;
-        if(city) storeFields.return_address.city = city;
-        if(state) storeFields.return_address.state = state;
-        if(country) storeFields.return_address.country = country;
-        if(area) storeFields.return_address.area = area;
-        
-        // Tags - Split into array
-        if(tags) {
-            storeFields.tags = tags.split(',').map(tag => tag.trim());
-        }
-
-        // Build variant array
-        storeFields.social = {};
-        if(youtube) storeFields.social.youtube = youtube;
-        if(instagram) storeFields.social.instagram = instagram;
-        if(facebook) storeFields.social.facebook = facebook;
-        if(twitter) storeFields.social.twitter = twitter;
-        if(website) storeFields.social.website = website;
-
-        storeFields.profiles = [];
+        const gameFields = {};
+        gameFields.language = language;
         
         try {
-            const profile = await User.findById(req.user.id);
+            console.log('USER ID HERE');
+            console.log(req.user.id);
 
-            storeFields.profiles.push({
-                profile: profile.id
-            });
+            gameFields.user_1 = req.user.id;
 
-            // let store = await Store.findOne({ profile: profile.id });
-
-            // if(store) {
-            //     // Update
-            //     store = await Store.findOneAndUpdate(
-            //         { profile: profile.id }, 
-            //         { $set: storeFields }, 
-            //         { new: true }
-            //     );
-
-            //     return res.json(store);
-            // }
-            
             // Create
-            const newStore = new Store(storeFields);
-        
-            await newStore.save();
+            const newGame = new Game(gameFields);
 
-            // Update profile
-            profile.stores.unshift({ store: newStore._id });
+            const game = await newGame.save();
 
-            profile.recent_store = newStore._id;
-
-            await profile.save();
-            
-            res.json(newStore);
+            res.json(game);
         } catch (err) {
             console.error(err.message);
             res.status(500).send('Server Error');
@@ -157,94 +42,161 @@ router.post('/', async (req, res) => {
     }
 );
 
-// @route POST api/stores
-// @desc Edit A Store
-// @access Public
-router.post('/edit/:id/', upload.single('file'),[ auth, [
-    check('name', 'Name is required').not().isEmpty()
-]], async (req, res) => {
-    const errors = validationResult(req);
-    if(!errors.isEmpty()) {
-        return res.status(400).json({errors: errors.array() });
-    }
-
-    const {
-        name, 
-        description,
-        tags,
-        youtube,
-        instagram,
-        facebook,
-        twitter,
-        website,
-        show_banner,
-        privacy,
-        passcode,
-        taxes_in_prod,
-        delivery_cost_customers
-    } = req.body;
-
-    // Get fields
-    const storeFields = {};
-    if(name) storeFields.name = name;
-    if(show_banner) storeFields.show_banner = show_banner;
-    if(privacy) storeFields.privacy = privacy;
-    if(passcode) storeFields.passcode = passcode;
-    if(taxes_in_prod) storeFields.taxes_in_prod = taxes_in_prod;
-    if(delivery_cost_customers) storeFields.delivery_cost_customers = delivery_cost_customers;
-    if(req.file) storeFields.img = req.file.id;
-    if(req.file) storeFields.img_name = req.file.filename;
-    if(description) storeFields.description = description;
-    
-    // Tags - Split into array
-    if(tags) {
-        storeFields.tags = tags.split(',').map(tag => tag.trim());
-    }
-
-    // Build variant array
-    storeFields.social = {};
-    if(youtube) storeFields.social.youtube = youtube;
-    if(instagram) storeFields.social.instagram = instagram;
-    if(facebook) storeFields.social.facebook = facebook;
-    if(twitter) storeFields.social.twitter = twitter;
-    if(website) storeFields.social.website = website;
-    
+// @route   GET api/games/:id
+// @desc    Get Game by ID
+// @access  Private 
+router.get('/find/:id', auth, async (req, res) => {
     try {
-        console.log('EDIT STORE')
-        
-        let store = await Store.findById(req.params.id);
+        const game = await Game.findById(req.params.id).populate('user_1', ['username']).populate('user_2', ['username'])
 
-        if(!store) {
-            return res.status(404).json({ msg: 'Store not found' });
+        if (!game) {
+            return res.status(404).json({ msg: 'Game not found' });
         }
 
-        // Update
-        store = await Store.findOneAndUpdate(
-            { _id: req.params.id }, 
-            { $set: storeFields }, 
-            { new: true }
-        );
-
-        return res.json(store);
+        res.json(game);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        if (err.kind === 'ObjectId') {
+            return res.status(404).json({ msg: 'Game not found'});
+        }
+
+        res.status(500).send('Server Error')
     }
-}
-);
+})
 
-// @route GET api/stores/subscriptions/:id
-// @desc Get stores current user is subscribed too
-// @access Private
-router.get('/subscriptions/:id', auth, async (req, res) => {
+// @route GET api/products
+// @desc Find all Games waiting (w/o a user_2)
+// @access private
+router.get('/matching', auth, async (req, res) => {
     try {
-        const stores = await Store.find({favorites: {$elemMatch: {user:req.params.id}}});
+        const games = await Game.find({ user_2: null }).populate('user_1', ['username'])
 
-        res.json(stores);
+        console.log('GAMES HERE');
+        console.log(games);
+
+        res.json(games);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error'); 
     }
+});
+
+
+// @route POST api/games/join
+// @desc Update Game
+// @access Private
+router.post('/join/:game_id', auth, async (req, res) => {
+    console.log('JOINING GAME');
+
+    // Get fields
+    const gameFields = {};
+
+    try {
+        console.log('USER ID HERE');
+        console.log(req.user.id);
+
+        console.log('GAME ID HERE');
+        console.log(req.params.game_id);
+
+        gameFields.user_2 = req.user.id;
+
+        let game = await Game.findById(req.params.game_id);
+
+        if(!game) {
+            return res.status(404).json({ msg: 'Game not found' });
+        }
+
+        // Update
+        await Game.findOneAndUpdate(
+            { _id: req.params.game_id }, 
+            { $set: gameFields }, 
+            { new: true }
+        );
+
+        const newGame = await Game.findById(req.params.game_id);
+
+        return res.json(newGame);
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).send('Server error')
+    }
+
+});
+
+// @route POST api/games/join
+// @desc Update Game - Ready Up Player 1
+// @access Private
+router.post('/ready_1/:game_id', auth, async (req, res) => {
+    console.log('UPDATING GAME READY 1');
+
+    // Get fields
+    const gameFields = {};
+    gameFields.ready_1 = true;
+
+    try {
+
+        console.log('GAME ID HERE');
+        console.log(req.params.game_id);
+
+        let game = await Game.findById(req.params.game_id);
+
+        if(!game) {
+            return res.status(404).json({ msg: 'Game not found' });
+        }
+
+        // Update
+        await Game.findOneAndUpdate(
+            { _id: req.params.game_id }, 
+            { $set: gameFields }, 
+            { new: true }
+        );
+
+        const newGame = await Game.findById(req.params.game_id);
+
+        return res.json(newGame);
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).send('Server error')
+    }
+
+});
+
+// @route POST api/games/join
+// @desc Update Game - Ready Up Player 2
+// @access Private
+router.post('/ready_2/:game_id', auth, async (req, res) => {
+    console.log('UPDATING GAME READY 2');
+
+    // Get fields
+    const gameFields = {};
+    gameFields.ready_2 = true;
+
+    try {
+
+        console.log('GAME ID HERE');
+        console.log(req.params.game_id);
+
+        let game = await Game.findById(req.params.game_id);
+
+        if(!game) {
+            return res.status(404).json({ msg: 'Game not found' });
+        }
+
+        // Update
+        await Game.findOneAndUpdate(
+            { _id: req.params.game_id }, 
+            { $set: gameFields }, 
+            { new: true }
+        );
+
+        const newGame = await Game.findById(req.params.game_id);
+
+        return res.json(newGame);
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).send('Server error')
+    }
+
 });
 
 module.exports = router;

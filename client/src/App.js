@@ -1,5 +1,18 @@
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+
 import './App.css';
-import { BrowserRouter as Router, Route, Routes, Redirect, Link } from 'react-router-dom';
+
+// Routing
+import PrivateRoute from './routes/PrivateRoute';
+
+// Redux
+import { Provider } from 'react-redux';
+import store from './store';
+
+// Authentication
+import setAuthToken from './utils/setAuthToken';
+import { loadUser } from './actions/authActions';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -9,18 +22,45 @@ import MatchPage from './pages/MatchPage';
 import GamePage from './pages/GamePage';
 import ReviewPage from './pages/ReviewPage';
 
-function App() {
+if(localStorage.token) {
+  setAuthToken(localStorage.token);
+}
+
+const App = () => {
+
+  useEffect(() => {
+    store.dispatch(loadUser());
+
+  }, []);
+
   return (
-    <Router>
-        <Routes>
-          <Route exact path="/" element={<HomePage />} />
-          <Route exact path="/languages" element={<LanguagesPages />} />
-          <Route exact path="/searching" element={<SearchingPage />} />
-          <Route exact path="/match" element={<MatchPage />} />
-          <Route exact path="/game" element={<GamePage />} />
-          <Route exact path="/review" element={<ReviewPage />} />
-        </Routes>
-    </Router>
+    <Provider store={store}>
+      <Router>
+          <Routes>
+            <Route exact path="/" element={<HomePage />} />
+            <Route
+              path="/languages"
+              element={
+                <PrivateRoute>
+                  <LanguagesPages />
+                </PrivateRoute>
+              }
+            />
+            <Route exact path="/searching" element={<SearchingPage />} />
+            <Route exact path="/match" element={<GamePage />} />
+            <Route exact path="/review" element={<ReviewPage />} />
+            <Route 
+              exact 
+              path="/game/:id" 
+              element={
+                <PrivateRoute>
+                  <MatchPage />
+                </PrivateRoute>
+              } 
+            />
+          </Routes>
+      </Router>
+    </Provider>
   );
 }
 

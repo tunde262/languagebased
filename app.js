@@ -6,7 +6,7 @@ const connectDB = require('./config/db');
 
 // routes file
 const auth = require('./routes/authRoutes');
-const game = require('./routes/authRoutes');
+const game = require('./routes/gameRoutes');
 
 // Initialize express server
 const app = express();
@@ -18,7 +18,7 @@ app.use(express.json({ extended: false }));
 
 // Server endpoints (i.e. localhost:5000/api/auth)
 app.use('/api/auth', auth);
-app.use('/api/game', game);
+app.use('/api/games', game);
 
 // Server Port #
 const port = 5000;

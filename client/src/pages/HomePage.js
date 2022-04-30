@@ -1,8 +1,48 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom';
 
-const HomePage = props => {
+// Redux
+import { connect } from 'react-redux';
+
+// Actions
+import { login, register } from '../actions/authActions';
+
+// Initial State
+const initialState = {
+    username: '',
+    password: ''
+}
+
+const HomePage = ({
+    auth: { 
+        isAuthenticated, 
+        user 
+    }, 
+    login,
+    register
+}) => {
+    const [formData, setFormData] = useState(initialState);
+
+    const { username, password } = formData;
+
+    const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value});
+
+    const onLogin = async e => {
+        e.preventDefault();
+        login(username, password);
+    }
+
+    const onRegister = async e => {
+        e.preventDefault();
+        register(username, password);
+    }
+
+    // Redirect if logged in
+    if(user) {
+        window.location.href = "/languages";
+    }
+
     const findMatch = (e) => {
         e.preventDefault();
         window.location.href = "/languages";
@@ -17,15 +57,31 @@ const HomePage = props => {
 
   return (
     <main>
-        <div class="container">
-            <div class="img_container">
+        <div className="container">
+            <div className="img_container">
                 img
             </div>
-            <div class="info_container">
+            <div className="info_container">
                 <h1>Learn Spanish in just 5 minutes a day. For free.</h1>
-                <div class="btn_group">
-                    <button class="btn primary" onClick={routeChange}>Start a game</button>
-                    <button class="btn secondary">Quick Review Quiz</button>
+                <div style={{width:'100%'}}>
+                    <input
+                        type="text"
+                        placeholder="Username"
+                        name="username"
+                        value={username}
+                        onChange={e => onChange(e)}
+                    />
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        name="password"
+                        value={password}
+                        onChange={e => onChange(e)}
+                    />
+                </div>
+                <div className="btn_group">
+                    <button className="btn primary" onClick={onRegister}>Sign Up</button>
+                    <button className="btn secondary" onClick={onLogin}>Login</button>
                 </div>
             </div>
         </div>
@@ -33,6 +89,14 @@ const HomePage = props => {
   )
 }
 
-HomePage.propTypes = {}
+HomePage.propTypes = {
+    auth: PropTypes.object.isRequired,
+    login: PropTypes.func.isRequired,
+    register: PropTypes.func.isRequired,
+}
 
-export default HomePage
+const mapStateToProps = state => ({
+    auth: state.auth
+});
+
+export default connect(mapStateToProps, { login, register })(HomePage);

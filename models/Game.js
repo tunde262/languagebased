@@ -8,7 +8,8 @@ const UserSchema = new Schema({
     },
     user_2: {
         type: Schema.Types.ObjectId,
-        ref: 'user'
+        ref: 'user',
+        default: null
     },
     ready_1: {
         type: Boolean,
@@ -18,10 +19,14 @@ const UserSchema = new Schema({
         type: Boolean,
         default: false
     },
+    language: {
+        type: String,
+        required: true
+    },
     date: {
         type: Date,
         default: Date.now
     }
 });
 
-module.exports = User = mongoose.model('user', UserSchema);
+module.exports = Game = mongoose.model('game', UserSchema);
