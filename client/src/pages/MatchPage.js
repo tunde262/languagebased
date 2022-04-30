@@ -31,7 +31,11 @@ const MatchPage = ({ game: { game, loading }, getGameById, readyPlayer1, readyPl
       if(game.ready_2) {
         setReady_two(true);
       }
-  }
+
+      if(game.ready_1 && game.ready_2) {
+        window.location.href = `/game/${game._id}`;
+      }
+    }
 
   }, [ game ]);
 
@@ -77,7 +81,7 @@ const MatchPage = ({ game: { game, loading }, getGameById, readyPlayer1, readyPl
                                 - {game.user_1.username}
                               </span>
                             </span>
-                            {ready_one ? <button>Ready</button> : <button onClick={(e) => readyPlayerOne(e)}>Ready Up</button>}
+                            {ready_one ? <button className='btn primary' style={{maxWidth:'50px'}}>Ready</button> : <button className='btn secondary' style={{maxWidth:'50px', margin: '5px 0'}} onClick={(e) => readyPlayerOne(e)}>Ready Up</button>}
                             
                         </div>
                         <div className="match_player">
@@ -87,7 +91,7 @@ const MatchPage = ({ game: { game, loading }, getGameById, readyPlayer1, readyPl
                                 - {game.user_2.username}
                               </span>
                             </span>
-                            {ready_two ? <button>Ready</button> : <button onClick={(e) => readyPlayerTwo(e)}>Ready Up</button>}
+                            {ready_two ? <button className='btn primary' style={{maxWidth:'50px'}}>Ready</button> : <button className='btn secondary' style={{maxWidth:'50px', margin: '5px 0'}} onClick={(e) => readyPlayerTwo(e)}>Ready Up</button>}
                         </div>
                     </div>
                 </div>
@@ -105,11 +109,6 @@ const MatchPage = ({ game: { game, loading }, getGameById, readyPlayer1, readyPl
       }
   }
 
-  if(game) {
-    if(game.ready_1 && game.ready_2) {
-      window.location.href = `/match`;
-    }
-  }
 
   return (
     <>

@@ -86,7 +86,7 @@ export const joinGame = id => async dispatch => {
             payload: res.data
         });
 
-        window.location.href = `/game/${res.data._id}`;
+        window.location.href = `/match/${res.data._id}`;
 
     } catch (err) {
         console.log('ERRORS')
@@ -109,6 +109,42 @@ export const readyPlayer1 = id => async dispatch => {
         console.log(id);
 
         const res = await axios.post(`/api/games/ready_1/${id}`, config);
+
+        dispatch({
+            type: GET_GAME,
+            payload: res.data
+        });
+
+        // window.location.href = `/game/${res.data._id}`;
+
+    } catch (err) {
+        console.log('ERRORS')
+        console.log(err);
+    }
+}
+
+// Update Game Score 
+export const updateScore = (id, score) => async dispatch => {
+    console.log('UPDATING SCORE OF GAME')
+
+    try {
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+
+        console.log('GAME ID')
+        console.log(id);
+
+        console.log('GAME SCORE');
+        console.log(score); 
+
+        const body = JSON.stringify({ 
+            score
+        });
+
+        const res = await axios.post(`/api/games/score/${id}`, body, config);
 
         dispatch({
             type: GET_GAME,

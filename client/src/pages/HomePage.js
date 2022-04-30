@@ -59,15 +59,16 @@ const HomePage = ({
     <main>
         <div className="container">
             <div className="img_container">
-                img
+          
             </div>
             <div className="info_container">
                 <h1>Learn Spanish in just 5 minutes a day. For free.</h1>
-                <div style={{width:'100%'}}>
+                <div className="btn_group" id="signDiv"> 
                     <input
                         type="text"
                         placeholder="Username"
                         name="username"
+                        className='login input'
                         value={username}
                         onChange={e => onChange(e)}
                     />
@@ -75,6 +76,7 @@ const HomePage = ({
                         type="password"
                         placeholder="Password"
                         name="password"
+                        className='login input'
                         value={password}
                         onChange={e => onChange(e)}
                     />

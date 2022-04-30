@@ -69,31 +69,15 @@ const LanguagesPages = ({ addGame, joinGame }) => {
 
   return (
     <div style={{display: 'flex', justifyContent:'center',}}>
-        <div style={{width: '100%', padding:'50px', display: 'flex', alignItems:'center', flexDirection:'column'}}>
+        <div style={{width: '100%', marginTop:'50px', padding:'50px', display: 'flex', alignItems:'center', flexDirection:'column'}}>
             <h1>Choose a language</h1>
-            <ul style={{display: 'grid', gridGap:'24px', textAlign:'center', width: '100%', gridTemplateColumns: 'repeat(auto-fill,minmax(210px,1fr))'}}>
-                <div style={{border:'1px solid grey', borderRadius:'2px', padding:'20px'}}>
+            <ul style={{display: 'flex', justifyContent:'center'}}>
+                <div style={{border:'2px solid #e5e5e5', display:'flex', flexDirection:'column', alignItems:'center', borderRadius:'12px', padding:'20px', margin:'10px'}}>
                     <div style={{height:'50px'}}>
                         <img style={{height:'70px'}} src={spanishFlag} alt="Spanish Flag" />
                     </div>
-                    <h2>Spanish</h2>
-                    <button onClick={e => findMatch(e, true)}>Find Match</button>
-                </div>
-                <div style={{border:'1px solid grey', borderRadius:'2px', padding:'20px'}}>
-                    <div style={{height:'50px'}}>
-                        <img style={{height:'40px'}} src={frenchFlag} alt="Spanish Flag" />
-                    </div>
-                    <h2>French</h2>
-                    <button onClick={e => findMatch(e, false)}>Find Match</button>
-                </div>
-                <div style={{border:'1px solid grey', borderRadius:'2px', padding:'20px'}}>
-                    <div style={{height:'50px'}}>
-                        <img style={{height:'40px'}} src={chineseFlag} alt="Spanish Flag" />
-                    </div>
-                    <h2>Chinese</h2>
-                    <Link to="/game">
-                        <button>Find Match</button>
-                    </Link>
+                    <h2 style={{margin:'5px 0'}}>Spanish</h2>
+                    <button className='btn primary' onClick={e => findMatch(e, true)}>Find Match</button>
                 </div>
             </ul>
         </div>

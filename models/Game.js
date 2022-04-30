@@ -23,6 +23,26 @@ const UserSchema = new Schema({
         type: String,
         required: true
     },
+    score_1: {
+        type: Number,
+        default: 0
+    },
+    score_1_done: {
+        type: Boolean,
+        default: false
+    },
+    score_2: {
+        type: Number,
+        default: 0
+    },
+    score_2_done: {
+        type: Boolean,
+        default: false
+    },
+    questions: {
+        type: Number,
+        default: 4
+    },
     date: {
         type: Date,
         default: Date.now

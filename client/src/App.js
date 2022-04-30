@@ -47,14 +47,22 @@ const App = () => {
               }
             />
             <Route exact path="/searching" element={<SearchingPage />} />
-            <Route exact path="/match" element={<GamePage />} />
             <Route exact path="/review" element={<ReviewPage />} />
+            <Route 
+              exact 
+              path="/match/:id" 
+              element={
+                <PrivateRoute>
+                  <MatchPage />
+                </PrivateRoute>
+              } 
+            />
             <Route 
               exact 
               path="/game/:id" 
               element={
                 <PrivateRoute>
-                  <MatchPage />
+                  <GamePage />
                 </PrivateRoute>
               } 
             />

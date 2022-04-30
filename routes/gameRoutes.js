@@ -199,5 +199,66 @@ router.post('/ready_2/:game_id', auth, async (req, res) => {
 
 });
 
+// @route POST api/games/score
+// @desc Update Score
+// @access Private
+router.post('/score/:game_id', auth, async (req, res) => {
+    console.log('SETTING GAME SCORE');
+
+    const {
+        score
+    } = req.body;
+
+    // Get fields
+    const gameFields = {};
+    gameFields.score = score;
+
+    try {
+
+        console.log('GAME ID HERE');
+        console.log(req.params.game_id);
+
+
+        let game = await Game.findById(req.params.game_id).populate('user_1').populate('user_2');
+        let user = await User.findById(req.user.id);
+
+        if(game.user_1.username === user.username) {
+            console.log('UPDATE PLAYER 1 SCORE')
+            gameFields.score_1 = score;
+            gameFields.score_1_done = true;
+        } else if (game.user_2.username === user.username) {
+            console.log('UPDATE PLAYER 2 SCORE')
+            gameFields.score_2 = score;
+            gameFields.score_2_done = true;
+        }
+
+        console.log('CHECKED PLAYER SCORE MATCH')
+        console.log(score)
+        console.log(game.user_1)
+        console.log(game.user_2)
+        console.log(req.user.id)
+        console.log(user)
+
+        if(!game) {
+            return res.status(404).json({ msg: 'Game not found' });
+        }
+
+        // Update
+        await Game.findOneAndUpdate(
+            { _id: req.params.game_id }, 
+            { $set: gameFields }, 
+            { new: true }
+        );
+
+        const newGame = await Game.findById(req.params.game_id);
+
+        return res.json(newGame);
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).send('Server error')
+    }
+
+});
+
 module.exports = router;
 
