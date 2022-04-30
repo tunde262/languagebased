@@ -64,13 +64,13 @@ const MatchPage = ({ game: { game, loading }, getGameById, readyPlayer1, readyPl
         )
       } else {
         return (
-          <div class="gamePage">
+          <div className="gamePage">
             <div>progress bar</div>
-            <div class="game_main">
-                <div class="match_container">
+            <div className="game_main">
+                <div className="match_container">
                     <h1>Match!</h1>
-                    <div class="match_player_container">
-                        <div class="match_player">
+                    <div className="match_player_container">
+                        <div className="match_player">
                             <span>
                               Player #1 
                               <span style={{fontSize: '1rem', color: 'red', marginLeft:'5px'}}>
@@ -80,7 +80,7 @@ const MatchPage = ({ game: { game, loading }, getGameById, readyPlayer1, readyPl
                             {ready_one ? <button>Ready</button> : <button onClick={(e) => readyPlayerOne(e)}>Ready Up</button>}
                             
                         </div>
-                        <div class="match_player">
+                        <div className="match_player">
                             <span>
                               Player #2 
                               <span style={{fontSize: '1rem', color: 'red', marginLeft:'5px'}}>
@@ -92,12 +92,12 @@ const MatchPage = ({ game: { game, loading }, getGameById, readyPlayer1, readyPl
                     </div>
                 </div>
             </div>
-            <div class="gameFooter_container">
+            <div className="gameFooter_container">
                 <div>
-                    <button class="btn">Skip</button>
+                    <button className="btn">Skip</button>
                 </div>
                 <div>
-                    <button class="btn">Check</button>
+                    <button className="btn">Check</button>
                 </div>
             </div>
           </div>
@@ -105,8 +105,10 @@ const MatchPage = ({ game: { game, loading }, getGameById, readyPlayer1, readyPl
       }
   }
 
-  if(game.ready_1 && game.ready_2) {
-    window.location.href = `/match`;
+  if(game) {
+    if(game.ready_1 && game.ready_2) {
+      window.location.href = `/match`;
+    }
   }
 
   return (
